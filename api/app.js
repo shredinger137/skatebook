@@ -10,23 +10,38 @@ app.get("/leagues", function (req, res) {
     res.header("Access-Control-Allow-Origin", "*");
     res.setHeader("Content-Type", "text/plain");
 
-    console.log("get leagues");
-
     var query = {};
+    var sortQuery = {};
 
-    if (req && req.query && req.query.searchQuery) { 
-        //create query
-     }
+    if (req && req.query) {
+        if (req.query.searchQuery) {
+            //create query
+        }
 
-    
-        dbFunctions.getLeaguesByQuery(query).then(result => {
-            if (result) {
-                res.send(result);
-            } else {
-                res.send("error");
-            }
-        })
-  
+        //set other params
+        var perPage = (req.query.perPage ? req.query.perPage : 100);
+        var page = (req.query.page ? req.query.page : 0);
+        var sort = (req.query.sort ? req.query.sort : "leagueName");
+        var sortValue = (req.query.sortValue ? req.query.sortValue : 1);
+
+    }
+
+    sortQuery[sort] = +sortValue;
+
+    dbFunctions.getLeaguesByQuery(query, perPage, page, sortQuery).then(result => {
+        if (result) {
+            dbFunctions.getLeaguesTotalByQuery(query).then(count => {
+                var data = [result, count];
+                res.send(data);
+            })
+               
+
+
+        } else {
+            res.send("error");
+        }
+    })
+
 });
 
 

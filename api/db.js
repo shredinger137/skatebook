@@ -17,20 +17,34 @@ exports.dbInit = () => {
 
 }
 
-exports.getLeaguesByQuery = async (query, perPage, page) => {
-    console.log("started getLeaguesByQuery");
-
-    if(!perPage){
-        var perPage = 200;
-    }
-    if(!page){
-        var page = 0;
-    }
+exports.getLeaguesByQuery = async (query, perPage, page, sortQuery) => {
 
     if (dbConnection) {
-        console.log("getting leagues from db");
-        return await dbConnection.collection("leagues").find(query).skip(page * perPage).limit(perPage).toArray();
-    } else return ("not connected");
 
+        try {
+            const dbCollection = dbConnection.collection("leagues");
+            let res = await dbCollection.find(query).skip(page * perPage).limit(perPage).sort(sortQuery).toArray();
+            return res;
+
+        } catch (err) {
+            return err;
+        }
+
+    }
 }
 
+exports.getLeaguesTotalByQuery = async (query) => {
+
+    if (dbConnection) {
+
+        try {
+            const dbCollection = dbConnection.collection("leagues");
+            let res = await dbCollection.find(query).count();
+            return res;
+
+        } catch (err) {
+            return err;
+        }
+
+    }
+}
