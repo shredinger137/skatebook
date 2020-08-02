@@ -19,8 +19,9 @@ app.get("/leagues", function (req, res) {
         }
 
         //set other params
-        var perPage = (req.query.perPage ? req.query.perPage : 100);
-        var page = (req.query.page ? req.query.page : 0);
+        console.log(req.query);
+        var perPage = (req.query.perPage ? +req.query.perPage : 50);
+        var page = (req.query.page ? +req.query.page : 0);
         var sort = (req.query.sort ? req.query.sort : "leagueName");
         var sortValue = (req.query.sortValue ? req.query.sortValue : 1);
 

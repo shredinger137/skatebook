@@ -12,7 +12,10 @@ export default class LeagueList extends React.Component {
         leagues: [],
         sort: "leagueName",
         sortValue: 1,
-        count: 0
+        count: 0,
+        currentPage: 1,
+        perPage: 30,
+        pagination: []
     };
 
     componentDidMount() {
@@ -20,18 +23,48 @@ export default class LeagueList extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.state.sort != prevState.sort || this.state.sortValue != prevState.sortValue) {
+        if (this.state.sort != prevState.sort || this.state.sortValue != prevState.sortValue || this.state.currentPage != prevState.currentPage) {
             this.fetchList();
+        }
+        if (this.state.count != prevState.count){
+            this.generatePageNumbers();
         }
 
     }
 
     fetchList() {
 
-        axios.get(`${config.apiUrl}/leagues?sort=${this.state.sort}&sortValue=${this.state.sortValue}`).then(res => {
+        axios.get(`${config.apiUrl}/leagues?sort=${this.state.sort}&sortValue=${this.state.sortValue}&page=${this.state.currentPage - 1}&perPage=${this.state.perPage}`).then(res => {
             this.setState({ leagues: res.data[0], count: res.data[1] });
         })
 
+    }
+
+    changePage(pageNumber){
+        console.log("change");
+        this.setState({currentPage: pageNumber});
+    }
+
+
+    generatePageNumbers(){
+
+        var pagesHtml = "";
+        var pagesList = [];
+        var totalPages = this.state.count / this.state.perPage;
+        var skip = Math.floor( totalPages / 15 );
+        console.log(skip);
+        for(var i = 1; i <= totalPages; i++){
+            if(i <= this.state.currentPage + 4 && i >= this.state.currentPage - 4 ){
+                pagesList.push(i);
+
+            } else if(i % skip == 0){
+                pagesList.push(i);
+            }
+        }
+
+        //document.getElementById("pagination").innerHTML = pagesHtml;
+        this.setState({pagination: pagesList})
+        
     }
 
     sort(sortKey) {
@@ -90,6 +123,10 @@ export default class LeagueList extends React.Component {
                     )}
 
                 </table>
+                <div id="pagination">
+                    {this.state.pagination.map(page =>
+                        <span style={{padding: "5px"}}onClick={() => this.changePage(page)}>{page}</span>)}
+                </div>
             </>
         )
     }
