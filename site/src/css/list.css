@@ -5,3 +5,19 @@
 .activeLink {
     font-weight: bold;
 }
+
+table {
+    margin: 0 auto;
+}
+
+td {
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: white;
+  }
+  
+  tr:nth-child(odd){
+   background-color: #DDDDDD;
+  } 

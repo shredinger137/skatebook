@@ -16,7 +16,8 @@ export default class LeagueList extends React.Component {
         count: 0,
         currentPage: 1,
         perPage: 30,
-        pagination: []
+        pagination: [],
+        totalPages: 0
     };
 
     componentDidMount() {
@@ -27,7 +28,7 @@ export default class LeagueList extends React.Component {
         if (this.state.sort != prevState.sort || this.state.sortValue != prevState.sortValue || this.state.currentPage != prevState.currentPage) {
             this.fetchList();
         }
-        if (this.state.count != prevState.count || this.state.currentPage != prevState.currentPage){
+        if (this.state.count != prevState.count || this.state.currentPage != prevState.currentPage) {
             this.generatePageNumbers();
         }
 
@@ -41,32 +42,45 @@ export default class LeagueList extends React.Component {
 
     }
 
-    changePage(pageNumber){
+    changePage(pageNumber) {
         console.log("change");
-        this.setState({currentPage: pageNumber});
+        this.setState({ currentPage: pageNumber });
     }
 
 
-    generatePageNumbers(){
+    generatePageNumbers() {
 
         var pagesList = [];
         var totalPages = this.state.count / this.state.perPage;
-        var skip = Math.floor( totalPages / 15 );
- 
-        for(var i = 1; i <= totalPages; i++){
-            if(i == 1 || i == totalPages){
+        this.setState({ totalPages: totalPages });
+        var skip = Math.floor(totalPages / 15);
+
+        for (var i = 1; i <= totalPages; i++) {
+            if (i == 1 || i == totalPages) {
                 pagesList.push(i);
             } else
-                if(i <= this.state.currentPage + 4 && i >= this.state.currentPage - 4 ){
-                pagesList.push(i);
+                if (i <= this.state.currentPage + 4 && i >= this.state.currentPage - 4) {
+                    pagesList.push(i);
 
-            } else if(i % skip == 0){
-                pagesList.push(i);
-            }
+                } else if (i % skip == 0) {
+                    pagesList.push(i);
+                }
         }
 
-        this.setState({pagination: pagesList})
-        
+        this.setState({ pagination: pagesList })
+
+    }
+
+    prevPage() {
+        if (this.state.currentPage > 1) {
+            this.setState({ currentPage: this.state.currentPage - 1 });
+        }
+    }
+
+    nextPage() {
+        if (this.state.currentPage < this.state.totalPages) {
+            this.setState({ currentPage: this.state.currentPage + 1 });
+        }
     }
 
     sort(sortKey) {
@@ -88,9 +102,9 @@ export default class LeagueList extends React.Component {
             <>
                 <table>
                     <tr>
-                        <td>
-                            <div onClick={() => this.sort("leagueName")}>League Name
-                            <span>
+                        <td style={{ width: "20em" }}>
+                            <div onClick={() => this.sort("leagueName")}><b>League Name</b>
+                                <span>
                                     {this.state.sort == "leagueName" ?
                                         this.state.sortValue === 1 ?
                                             '\u25B2' : '\u25BC'
@@ -101,8 +115,8 @@ export default class LeagueList extends React.Component {
                             </div>
                         </td>
                         <td>
-                            <div onClick={() => this.sort("country")}>League Country
-                            <span>
+                            <div style={{ width: "12rem" }} onClick={() => this.sort("country")}><b>Country</b>
+                                <span>
                                     {this.state.sort == "country" ?
                                         this.state.sortValue === 1 ?
                                             '\u25B2' : '\u25BC'
@@ -125,10 +139,18 @@ export default class LeagueList extends React.Component {
 
                 </table>
                 <div id="pagination">
-                    {this.state.pagination.map(page =>
-                        
+                    <span className=
+                        {this.state.currentPage > 1 ? "link" : null} onClick={() => this.prevPage()}>{'\u003C'}
+                    </span>
+                    {
+                        this.state.pagination.map(page =>
+                            <span className={this.state.currentPage == page ? "activeLink link" : "link"} style={{ padding: "5px" }} onClick={() => this.changePage(page)}>{page}
+                            </span>)
+                    }
 
-                        <span className={this.state.currentPage == page ? "activeLink link" : "link"} style={{padding: "5px"}}onClick={() => this.changePage(page)}>{page}</span>)}
+                    <span className=
+                        {this.state.currentPage < this.state.totalPages ? "link" : null} onClick={() => this.nextPage()}>{'\u003E'}
+                    </span>
                 </div>
             </>
         )
