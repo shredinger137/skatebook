@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { config } from '../config.js';
+import '../css/list.css'
 
 export default class LeagueList extends React.Component {
 
@@ -26,7 +27,7 @@ export default class LeagueList extends React.Component {
         if (this.state.sort != prevState.sort || this.state.sortValue != prevState.sortValue || this.state.currentPage != prevState.currentPage) {
             this.fetchList();
         }
-        if (this.state.count != prevState.count){
+        if (this.state.count != prevState.count || this.state.currentPage != prevState.currentPage){
             this.generatePageNumbers();
         }
 
@@ -48,13 +49,15 @@ export default class LeagueList extends React.Component {
 
     generatePageNumbers(){
 
-        var pagesHtml = "";
         var pagesList = [];
         var totalPages = this.state.count / this.state.perPage;
         var skip = Math.floor( totalPages / 15 );
-        console.log(skip);
+ 
         for(var i = 1; i <= totalPages; i++){
-            if(i <= this.state.currentPage + 4 && i >= this.state.currentPage - 4 ){
+            if(i == 1 || i == totalPages){
+                pagesList.push(i);
+            } else
+                if(i <= this.state.currentPage + 4 && i >= this.state.currentPage - 4 ){
                 pagesList.push(i);
 
             } else if(i % skip == 0){
@@ -62,14 +65,12 @@ export default class LeagueList extends React.Component {
             }
         }
 
-        //document.getElementById("pagination").innerHTML = pagesHtml;
         this.setState({pagination: pagesList})
         
     }
 
     sort(sortKey) {
 
-        //TODO: Set this to actually sort by different keys.
         if (this.state.sort == sortKey) {
             this.setState((prevState) => ({
                 sortValue: prevState.sortValue * -1
@@ -125,7 +126,9 @@ export default class LeagueList extends React.Component {
                 </table>
                 <div id="pagination">
                     {this.state.pagination.map(page =>
-                        <span style={{padding: "5px"}}onClick={() => this.changePage(page)}>{page}</span>)}
+                        
+
+                        <span className={this.state.currentPage == page ? "activeLink link" : "link"} style={{padding: "5px"}}onClick={() => this.changePage(page)}>{page}</span>)}
                 </div>
             </>
         )
