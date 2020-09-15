@@ -2,6 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import { config } from '../config.js';
 import '../css/list.css'
+import LeagueDetails from '../components/LeagueDetails';
+import '../css/modal.css'
 
 export default class LeagueList extends React.Component {
 
@@ -10,6 +12,9 @@ export default class LeagueList extends React.Component {
     }
 
     state = {
+        searchString: "Search doesn't work yet",
+        selectedLeague: false,
+        showDetails: false,
         leagues: [],
         sort: "leagueName",
         sortValue: 1,
@@ -45,6 +50,12 @@ export default class LeagueList extends React.Component {
     changePage(pageNumber) {
         console.log("change");
         this.setState({ currentPage: pageNumber });
+    }
+
+    closeDetails(){
+        this.setState({
+            showDetails: false
+        });
     }
 
 
@@ -84,7 +95,6 @@ export default class LeagueList extends React.Component {
     }
 
     sort(sortKey) {
-
         if (this.state.sort == sortKey) {
             this.setState((prevState) => ({
                 sortValue: prevState.sortValue * -1
@@ -97,9 +107,38 @@ export default class LeagueList extends React.Component {
         }
     }
 
+    showDetails(id) {
+        this.setState({
+            selectedLeague: id,
+            showDetails: true
+        });
+        console.log(this.state);
+    }
+
+    
+  stopProp = (e) => {
+    e.stopPropagation();
+  }
+
     render() {
         return (
             <>
+                {this.state.showDetails ?
+                    <div className="modalWrapper" onClick={() => this.closeDetails()}>
+                        <div className="modalInner" onClick={this.stopProp}>
+                            <LeagueDetails leagueId={this.state.selectedLeague}></LeagueDetails>
+                        </div>
+
+                    </div>
+
+
+                    :
+
+                    null
+                }
+
+                <input type="text" value={this.state.searchString}></input>
+                <br /><br />
                 <table>
                     <tr>
                         <td style={{ width: "20em" }}>
@@ -113,6 +152,12 @@ export default class LeagueList extends React.Component {
                                     }
                                 </span>
                             </div>
+                        </td>
+                        <td>
+                            <b>City</b>
+                        </td>
+                        <td>
+                            <b>Region</b>
                         </td>
                         <td>
                             <div style={{ width: "12rem" }} onClick={() => this.sort("country")}><b>Country</b>
@@ -131,7 +176,10 @@ export default class LeagueList extends React.Component {
                     {this.state.leagues.map(league =>
 
                         <tr>
-                            <td>{league.leagueName}</td>
+
+                            <td onClick={() => this.showDetails(league.leagueId)}>{league.leagueName}</td>
+                            <td>{league.city}</td>
+                            <td>{league.region}</td>
                             <td>{league.country}</td>
                         </tr>
 

@@ -5,6 +5,23 @@ var config = require("./config.js");
 
 dbFunctions.dbInit();
 
+
+app.get("/singleLeague", function(req, res) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader("Content-Type", "text/plain");
+
+    if(req.query.id){
+        var query = {leagueId: +req.query.id};
+        var sortQuery = {
+            leagueName: 1
+        }
+
+        dbFunctions.getLeaguesByQuery(query, 50, 0, sortQuery).then(result => {
+            res.send(result);
+        })
+    }
+})
+
 app.get("/leagues", function (req, res) {
 
     res.header("Access-Control-Allow-Origin", "*");
