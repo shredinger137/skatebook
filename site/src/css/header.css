@@ -1,0 +1,57 @@
+.menuWrapper {
+    position: sticky;
+    font-family: montserrat-medium,sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding-top: 22px;
+    padding-bottom: 10px;
+
+}
+
+.signUpButton {
+    display: block;
+    float: right;
+    padding-right: 55px;
+}
+
+.menuWrapper li, p {
+    color: #c8c8c8;
+}
+
+.menuWrapper li:hover {
+     color: #f05f40;
+     text-decoration: none;
+}
+
+.menuWrapper ul {
+    list-style-type: none;
+    overflow: hidden;
+    display: block;
+}
+
+.menuWrapper li a {
+    display: block;
+    text-align: center;
+}
+
+.menuWrapper li {
+   display: inline-block;
+    padding-left: 15px;
+}
+
+.user {
+    display: block;
+    float: left;
+    padding-left: 15px;
+}
+
+@media screen and (max-width: 992px) {
+
+    .user {
+        display: none;
+    }
+
+
+
+  }

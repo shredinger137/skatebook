@@ -18,6 +18,10 @@
 
 }
 
+.menuList a {
+    text-decoration: none;
+}
+
 .modalInner label, .modalInner p, .modalInner span, .modalInner h1, .modalInner h2, .modalInner h3 {
     color: black;
 }

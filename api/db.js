@@ -3,13 +3,13 @@ var express = require("express");
 var app = express();
 var mongourl = "mongodb://localhost:27017";
 var MongoClient = require('mongodb').MongoClient, Server = require('mongodb');
-
+var passwordHash = require('password-hash');
 var dbConnection = null;
 var connectedToDatabase = false;
 
 
 //this was a helper function during initial database creation; use the same random method to assign future IDs
-//to avoid confusion, deletion should just zero out the fields but keep the id
+//to avoid confusion. Deletion should just zero out the fields but keep the id
 
 async function createLeagueId() {
     if (dbConnection) {
@@ -82,5 +82,86 @@ exports.getLeaguesTotalByQuery = async (query) => {
             return err;
         }
 
+    }
+}
+
+exports.checkIfUserExists = async (email) => {
+    if (dbConnection) {
+        try {
+            var account = await dbConnection.collection("users").findOne({ email: email });
+        } catch (err) {
+            console.log(err);
+        }
+        if (account) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+}
+
+exports.getNewId = async () => {
+    var id = Math.random().toString(36).slice(2);
+    if (dbConnection) {
+        try {
+            var account = await dbConnection.collection("users").findOne({ trexaId: id });
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+        if (account) {
+            getNewId();
+        } else {
+            try {
+                var challenge = await dbConnection.collection("challenges").findOne({ challengeId: id });
+            } catch (err) {
+                console.log(err);
+                return false;
+            }
+            if (challenge) {
+                getNewId();
+            } else {
+                return id;
+            }
+        }
+    }
+}
+
+exports.createUserAccount = async (username, password, emailAddress, id) => {
+    var passwordHashed =  0 //passwordHash.generate(password);
+    var userData = {
+      internalId: id,
+      username: username,
+      email: emailAddress,
+      password: passwordHashed
+    }
+
+    if (dbConnection) {
+      dbConnection.collection("users").insertOne(userData, function (err, result) {
+        if (err) throw err;
+        return true;
+      }
+      )
+    }
+  }
+
+
+exports.createUserAccount = async (username, password, emailAddress, id, res) => {
+    var passwordHashed = passwordHash.generate(password);
+
+    var userData = {
+        internalId: id,
+        username: username,
+        email: emailAddress,
+        password: passwordHashed
+    }
+
+    if (dbConnection) {
+        dbConnection.collection("users").insertOne(userData, function (err, result) {
+            if (err) throw err;
+            return true;
+        }
+        )
     }
 }
