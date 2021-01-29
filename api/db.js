@@ -30,7 +30,6 @@ async function createLeagueId() {
                 if (search && search.length > 1) {
                     var random = Math.floor(Math.random() * 90000) + 10000;
                     if (true) {
-                        console.log("Writing id");
                         const dbCollection = dbConnection.collection("leagues");
                         dbCollection.updateOne({ _id: league._id }, { $set: { leagueId: random } });
                     }
@@ -56,7 +55,6 @@ exports.dbInit = () => {
 }
 
 exports.getLeaguesByQuery = async (query, perPage, page, sortQuery) => {
-    if (dbConnection) {
         try {
             const dbCollection = dbConnection.collection("leagues");
             let res = await dbCollection.find(query).skip(page * perPage).limit(perPage).sort(sortQuery).toArray();
@@ -65,8 +63,6 @@ exports.getLeaguesByQuery = async (query, perPage, page, sortQuery) => {
         } catch (err) {
             return err;
         }
-
-    }
 }
 
 exports.getLeaguesTotalByQuery = async (query) => {
@@ -127,24 +123,6 @@ exports.getNewId = async () => {
         }
     }
 }
-
-exports.createUserAccount = async (username, password, emailAddress, id) => {
-    var passwordHashed =  0 //passwordHash.generate(password);
-    var userData = {
-      internalId: id,
-      username: username,
-      email: emailAddress,
-      password: passwordHashed
-    }
-
-    if (dbConnection) {
-      dbConnection.collection("users").insertOne(userData, function (err, result) {
-        if (err) throw err;
-        return true;
-      }
-      )
-    }
-  }
 
 
 exports.createUserAccount = async (username, password, emailAddress, id, res) => {

@@ -31,7 +31,7 @@ export default class LeagueDetails extends React.Component {
 
     getLeagueDetails() {
         if (this.props.leagueId) {
-            axios.get(`${config.apiUrl}/singleLeague?id=${this.props.leagueId}`).then(res => {
+            axios.get(`${config.apiUrl}/leagues/${this.props.leagueId}`).then(res => {
                 if (res.data && res.data[0]) {
                     this.setState({ leagueData: res.data[0] });
                     console.log(res.data[0]);

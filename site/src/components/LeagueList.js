@@ -42,7 +42,7 @@ export default class LeagueList extends React.Component {
     fetchList() {
 
         axios.get(`${config.apiUrl}/leagues?sort=${this.state.sort}&sortValue=${this.state.sortValue}&page=${this.state.currentPage - 1}&perPage=${this.state.perPage}`).then(res => {
-            this.setState({ leagues: res.data[0], count: res.data[1] });
+            this.setState({ leagues: res.data.results, count: res.data.count });
         })
 
     }
